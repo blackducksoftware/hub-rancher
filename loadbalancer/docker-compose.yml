@@ -1,0 +1,19 @@
+version: '2'
+services:
+  https-redirect:
+    image: dockerhub.cisco.com/docker.io/scottmiller171/ssl-redirect:latest
+    ports:
+    - 80:80/tcp
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.scheduler.global: 'true'
+  bdhub-loadbalancer:
+    image: rancher/lb-service-haproxy:v0.7.15
+    ports:
+    - 443:443/tcp
+    labels:
+      io.rancher.scheduler.affinity:host_label: crate.host.name=angry_yalow
+      io.rancher.container.agent.role: environmentAdmin,agent
+      io.rancher.container.agent_service.drain_provider: 'true'
+      io.rancher.container.create_agent: 'true'
+      io.rancher.scheduler.affinity: crate.host.name=angry_yalow

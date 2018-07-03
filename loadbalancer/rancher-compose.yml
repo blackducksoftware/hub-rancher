@@ -1,0 +1,36 @@
+version: '2'
+services:
+  https-redirect:
+    start_on_create: true
+  bdhub-loadbalancer:
+    scale: 1
+    start_on_create: true
+    lb_config:
+      certs: []
+      config: |-
+        defaults
+        timeout connect         10s
+        timeout client          60m
+        timeout server          120m
+
+        backend webserver1
+        server $$IP ssl verify none
+      default_cert: ui.bdhubtest-01.crate.farm
+      port_rules:
+      - backend_name: webserver1
+        hostname: ''
+        path: ''
+        priority: 1
+        protocol: https
+        service: bdhub/webserver
+        source_port: 443
+        target_port: 8080
+    health_check:
+      healthy_threshold: 2
+      response_timeout: 2000
+      port: 42
+      unhealthy_threshold: 3
+      initializing_timeout: 60000
+      interval: 2000
+      strategy: recreate
+      reinitializing_timeout: 60000
