@@ -10,29 +10,27 @@ It currently requires busybox HTTPD is available in the container you wish to he
 
 ## Example usage:
 ```
-  postgres:
-    image: blackducksoftware/hub-postgres:4.4.0
-    volumes:
-    - postgres96-data-volume-test:/var/lib/postgresql/data
-    mem_reservation: 3221225472
-    links:
-    - cfssl:cfssl
-    - logstash:logstash
-    user: root:root
-    volumes_from:
-    - healthcheck-helper-postgres
+  zookeeper:
+    image: blackducksoftware/hub-zookeeper:4.6.1
     environment:
-      ENTRYPOINT: /hub-database.sh postgres
-      HEALTHCHECK: /usr/local/bin/docker-healthcheck.sh
+      ENTRYPOINT: docker-entrypoint.sh zkServer.sh start-foreground /opt/blackduck/zookeeper/conf/zoo.cfg
+      HEALTHCHECK: "zkServer.sh status /opt/blackduck/zookeeper/conf/zoo.cfg"
       WRAPPER: /opt/crate/heathcliff/healthchecks/wrapper.sh
-    entrypoint:
-    - /opt/crate/heathcliff/entrypoint.sh
+    entrypoint: [ "sh", "-c" , "/opt/crate/heathcliff/entrypoint.sh" ]
+    mem_reservation: 402653184
+    links:
+    - logstash:logstash
+    volumes_from:
+    - healthcheck-helper-zookeeper
+    user: zookeeper:root
     labels:
-      io.rancher.scheduler.affinity:host_label: crate.host.name=agitated_fletchling
-      io.rancher.sidekicks: healthcheck-helper-postgres
-  healthcheck-helper-postgres:
-    image: containers.cisco.com/chrhogan/heathcliff:v1.1.3
+      io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
+      io.rancher.sidekicks: healthcheck-helper-zookeeper
+  healthcheck-helper-zookeeper:
+    image: murkm/heathcliff:0.0.2
+    links:
+    - logstash:logstash
     labels:
+      io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
-
 ```
