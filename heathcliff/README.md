@@ -34,3 +34,5 @@ It currently requires busybox HTTPD is available in the container you wish to he
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
 ```
+Note: entrypoint semantics should specify shell as the command. This is to avoid creating zombie processes in the container.
+Exception culd be made for an entrypoing that would exec a process that properly waits on child processes.
