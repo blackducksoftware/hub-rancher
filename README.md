@@ -5,7 +5,7 @@ Deployment framework provides translation of script based health-checks into HTT
 
 ## Build ##
 
-Container Build instructions can be found here:
+Container Build instructions can be found here: https://github.com/blackducksoftware/hub-rancher/wiki
 
 ## Documentation ##
 
