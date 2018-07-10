@@ -1,0 +1,12 @@
+version: '2'
+services:
+  hub-lb:
+    start_on_create: true
+    lb_config:
+      certs: []
+      port_rules:
+      - priority: 1
+        protocol: tcp
+        service: webserver
+        source_port: 443
+        target_port: 8443
