@@ -1,0 +1,332 @@
+version: '2'
+services:
+  webapp:
+    image: blackducksoftware/hub-webapp:4.6.1
+    environment:
+      HUB_MAX_MEMORY: 9600m
+      HUB_POSTGRES_ADMIN: blackduck
+      HUB_POSTGRES_ENABLE_SSL: 'true'
+      HUB_POSTGRES_HOST: postgres
+      HUB_POSTGRES_PORT: '5432'
+      HUB_POSTGRES_USER: blackduck_user
+      HUB_PROXY_NON_PROXY_HOSTS: solr
+      HUB_VERSION: 4.6.1
+      ENTRYPOINT: docker-entrypoint.sh catalina.sh run
+      HEALTHCHECK: "/usr/local/bin/docker-healthcheck.sh https://127.0.0.1:8443/api/health-checks/liveness /opt/blackduck/hub/hub-webapp/security/root.crt"
+      WRAPPER: /opt/crate/heathcliff/healthchecks/wrapper.sh
+    entrypoint: ["sh", "-c", "/opt/crate/heathcliff/entrypoint.sh"]
+    volumes:
+    - log-volume:/opt/blackduck/hub/logs
+    - webapp-volume:/opt/blackduck/hub/hub-webapp/security
+    mem_reservation: 2147483648
+    links:
+    - logstash:logstash
+    - cfssl:cfssl
+    - registration:registration
+    - zookeeper:zookeeper
+    - postgres:postgres
+    - solr:solr
+    volumes_from:
+    - healthcheck-helper-webapp
+    user: tomcat:root
+    labels:
+      io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
+      io.rancher.sidekicks: healthcheck-helper-webapp
+  healthcheck-helper-webapp:
+    image: murkm/heathcliff:0.0.2
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.container.start_once: 'true'
+  zookeeper:
+    image: blackducksoftware/hub-zookeeper:4.6.1
+    environment:
+      ENTRYPOINT: docker-entrypoint.sh zkServer.sh start-foreground /opt/blackduck/zookeeper/conf/zoo.cfg
+      HEALTHCHECK: "zkServer.sh status /opt/blackduck/zookeeper/conf/zoo.cfg"
+      WRAPPER: /opt/crate/heathcliff/healthchecks/wrapper.sh
+    entrypoint: ["sh", "-c", "/opt/crate/heathcliff/entrypoint.sh"]
+    mem_reservation: 402653184
+    links:
+    - logstash:logstash
+    volumes_from:
+    - healthcheck-helper-zookeeper
+    user: zookeeper:root
+    labels:
+      io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
+      io.rancher.sidekicks: healthcheck-helper-zookeeper
+  healthcheck-helper-zookeeper:
+    image: murkm/heathcliff:0.0.2
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.container.start_once: 'true'
+  documentation:
+    image: blackducksoftware/hub-documentation:4.6.1
+    environment:
+      ENTRYPOINT: docker-entrypoint.sh catalina.sh run
+      HEALTHCHECK: "/usr/local/bin/docker-healthcheck.sh https://127.0.0.1:8443/api/health-checks/liveness /opt/blackduck/hub/hub-authentication/security/root.crt"
+      WRAPPER: /opt/crate/heathcliff/healthchecks/wrapper.sh
+    entrypoint: ["sh", "-c", "/opt/crate/heathcliff/entrypoint.sh"]
+    mem_reservation: 536870912
+    links:
+    - logstash:logstash
+    volumes_from:
+    - healthcheck-helper-documentation
+    user: tomcat:root
+    labels:
+      io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
+      io.rancher.sidekicks: healthcheck-helper-documentation
+  healthcheck-helper-documentation:
+    image: murkm/heathcliff:0.0.2
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.container.start_once: 'true'
+  scan:
+    image: blackducksoftware/hub-scan:4.6.1
+    environment:
+      HUB_POSTGRES_ADMIN: blackduck
+      HUB_POSTGRES_ENABLE_SSL: 'true'
+      HUB_POSTGRES_HOST: postgres
+      HUB_POSTGRES_PORT: '5432'
+      HUB_POSTGRES_USER: blackduck_user
+      ENTRYPOINT: docker-entrypoint.sh catalina.sh run
+      HEALTHCHECK: "/usr/local/bin/docker-healthcheck.sh https://127.0.0.1:8443/api/health-checks/liveness /opt/blackduck/hub/hub-scan/security/root.crt"
+      WRAPPER: /opt/crate/heathcliff/healthchecks/wrapper.sh
+    entrypoint: ["sh", "-c", "/opt/crate/heathcliff/entrypoint.sh"]
+    read_only: true
+    volumes:
+    - /opt/blackduck/hub/filebeat
+    - /opt/blackduck/hub/hub-scan/logs
+    - /opt/blackduck/hub/tomcat
+    - /tmp
+    - log-volume:/opt/blackduck/hub/logs
+    - scan-volume:/opt/blackduck/hub/hub-scan/security
+    mem_reservation: 2147483648
+    links:
+    - logstash:logstash
+    - zookeeper:zookeeper
+    - registration:registration
+    - postgres:postgres
+    - cfssl:cfssl
+    volumes_from:
+    - healthcheck-helper-scan
+    user: tomcat:root
+    labels:
+      io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
+      io.rancher.sidekicks: healthcheck-helper-scan
+  healthcheck-helper-scan:
+    image: murkm/heathcliff:0.0.2
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.container.start_once: 'true'
+  cfssl:
+    image: blackducksoftware/hub-cfssl:4.6.1
+    environment:
+      ENTRYPOINT: docker-entrypoint.sh
+      HEALTHCHECK: "/usr/local/bin/docker-healthcheck.sh http://localhost:8888/api/v1/cfssl/scaninfo"
+      WRAPPER: /opt/crate/heathcliff/healthchecks/wrapper.sh
+    entrypoint: ["sh", "-c", "/opt/crate/heathcliff/entrypoint.sh"]
+    volumes:
+    - cert-volume:/etc/cfssl
+    volumes_from:
+    - healthcheck-helper-cfssl
+    mem_reservation: 671088640
+    user: cfssl:root
+    labels:
+      io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
+      io.rancher.sidekicks: healthcheck-helper-cfssl
+  healthcheck-helper-cfssl:
+    image: murkm/heathcliff:0.0.2
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.container.start_once: 'true'
+  jobrunner:
+    image: blackducksoftware/hub-jobrunner:4.6.1
+    environment:
+      HUB_MAX_MEMORY: 9600m
+      HUB_POSTGRES_ADMIN: blackduck
+      HUB_POSTGRES_ENABLE_SSL: 'true'
+      HUB_POSTGRES_HOST: postgres
+      HUB_POSTGRES_PORT: '5432'
+      HUB_POSTGRES_USER: blackduck_user
+      HUB_PROXY_NON_PROXY_HOSTS: solr
+      HUB_VERSION: 4.6.1
+      ENTRYPOINT: docker-entrypoint.sh jobrunner
+      HEALTHCHECK: /usr/local/bin/docker-healthcheck.sh
+      WRAPPER: /opt/crate/heathcliff/healthchecks/wrapper.sh
+    entrypoint: ["sh", "-c", "/opt/crate/heathcliff/entrypoint.sh"]
+    mem_reservation: 4294967296
+    links:
+    - logstash:logstash
+    - zookeeper:zookeeper
+    - registration:registration
+    - solr:solr
+    - postgres:postgres
+    - cfssl:cfssl
+    volumes_from:
+    - healthcheck-helper-jobrunner
+    user: jobrunner:root
+    labels:
+      io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
+      io.rancher.sidekicks: healthcheck-helper-jobrunner
+  healthcheck-helper-jobrunner:
+    image: murkm/heathcliff:0.0.2
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.container.start_once: 'true'
+  logstash:
+    image: blackducksoftware/hub-logstash:4.6.1
+    environment:
+      ENTRYPOINT: /usr/local/bin/docker-entrypoint.sh
+      HEALTHCHECK:  "/usr/local/bin/docker-healthcheck.sh http://localhost:9600/"
+      WRAPPER: /opt/crate/heathcliff/healthchecks/wrapper.sh
+    entrypoint: ["sh", "-c", "/opt/crate/heathcliff/entrypoint.sh"]
+    volumes:
+    - log-volume:/var/lib/logstash/data
+    mem_reservation: 671088640
+    volumes_from:
+    - healthcheck-helper-logstash
+    user: logstash:root
+    labels:
+      io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
+      io.rancher.sidekicks: healthcheck-helper-logstash
+  healthcheck-helper-logstash:
+    image: murkm/heathcliff:0.0.2
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.container.start_once: 'true'
+  solr:
+    image: blackducksoftware/hub-solr:4.6.1
+    environment:
+      ENTRYPOINT: docker-entrypoint.sh solr-foreground
+      HEALTHCHECK:  "/usr/local/bin/docker-healthcheck.sh http://localhost:8983/solr/project/admin/ping?wt=json"
+      WRAPPER: /opt/crate/heathcliff/healthchecks/wrapper.sh
+    entrypoint: ["sh", "-c", "/opt/crate/heathcliff/entrypoint.sh"]
+    volumes:
+    - solr6-volume:/opt/blackduck/hub/solr/cores.data
+    mem_reservation: 671088640
+    links:
+    - logstash:logstash
+    - zookeeper:zookeeper
+    volumes_from:
+    - healthcheck-helper-solr
+    user: solr:root
+    labels:
+      io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
+      io.rancher.sidekicks: healthcheck-helper-solr
+  healthcheck-helper-solr:
+    image: murkm/heathcliff:0.0.2
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.container.start_once: 'true'
+  registration:
+    image: blackducksoftware/hub-registration:4.6.1
+    environment:
+      HUB_PROXY_NON_PROXY_HOSTS: solr
+      HUB_VERSION: 4.6.1
+      ENTRYPOINT: docker-entrypoint.sh catalina.sh run
+      HEALTHCHECK:  "/usr/local/bin/docker-healthcheck.sh https://localhost:8443/registration/health-checks/liveness /opt/blackduck/hub/hub-registration/security/root.crt"
+      WRAPPER: /opt/crate/heathcliff/healthchecks/wrapper.sh
+    entrypoint: ["sh", "-c", "/opt/crate/heathcliff/entrypoint.sh"]
+    volumes:
+    - config-volume:/opt/blackduck/hub/registration/config
+    mem_reservation: 671088640
+    links:
+    - logstash:logstash
+    volumes_from:
+    - healthcheck-helper-registration
+    user: tomcat:root
+    labels:
+      io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
+      io.rancher.sidekicks: healthcheck-helper-registration
+  healthcheck-helper-registration:
+    image: murkm/heathcliff:0.0.2
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.container.start_once: 'true'
+  webserver:
+    image: blackducksoftware/hub-nginx:4.6.1
+    environment:
+      HUB_WEBSERVER_PORT: '8443'
+      IPV4_ONLY: '1'
+      ENTRYPOINT: docker-entrypoint.sh
+      HEALTHCHECK:  "/usr/local/bin/docker-healthcheck.sh https://localhost:8443/health-checks/liveness /opt/blackduck/hub/webserver/security/root.crt"
+      WRAPPER: /opt/crate/heathcliff/healthchecks/wrapper.sh
+    entrypoint: ["/opt/crate/heathcliff/entrypoint.sh"]
+    volumes:
+    - webserver-volume:/opt/blackduck/hub/webserver/security
+    mem_reservation: 536870912
+    links:
+    - documentation:documentation
+    - cfssl:cfssl
+    - webapp:webapp
+    volumes_from:
+    - healthcheck-helper-webserver
+    user: nginx:root
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
+      io.rancher.sidekicks: healthcheck-helper-webserver
+  healthcheck-helper-webserver:
+    image: murkm/heathcliff:0.0.2
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.container.start_once: 'true'
+  postgres:
+    image: blackducksoftware/hub-postgres:4.6.1
+    environment:
+      ENTRYPOINT: /hub-database.sh postgres
+      HEALTHCHECK: /usr/local/bin/docker-healthcheck.sh
+      WRAPPER: /opt/crate/heathcliff/healthchecks/wrapper.sh
+    entrypoint: ["/opt/crate/heathcliff/entrypoint.sh"]
+    volumes:
+    - postgres96-data-volume-v461:/var/lib/postgresql/data
+    - netapp-c0d5d2f:/prod_backups
+    mem_reservation: 3221225472
+    links:
+    - logstash:logstash
+    - cfssl:cfssl
+    volumes_from:
+    - healthcheck-helper-postgres
+    user: postgres:root
+    labels:
+      io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
+      io.rancher.sidekicks: healthcheck-helper-postgres
+  healthcheck-helper-postgres:
+    image: murkm/heathcliff:0.0.2
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.container.start_once: 'true'
+  authentication:
+    image: blackducksoftware/hub-authentication:4.6.1
+    environment:
+      HUB_MAX_MEMORY: 9600m
+      HUB_POSTGRES_ADMIN: blackduck
+      HUB_POSTGRES_ENABLE_SSL: 'true'
+      HUB_POSTGRES_HOST: postgres
+      HUB_POSTGRES_PORT: '5432'
+      HUB_POSTGRES_USER: blackduck_user
+      HUB_PROXY_NON_PROXY_HOSTS: solr
+      HUB_VERSION: 4.6.1
+      ENTRYPOINT: docker-entrypoint.sh
+      HEALTHCHECK: "/usr/local/bin/docker-healthcheck.sh https://127.0.0.1:8443/api/health-checks/liveness"
+      WRAPPER: /opt/crate/heathcliff/healthchecks/wrapper.sh
+    entrypoint: ["sh", "-c", "/opt/crate/heathcliff/entrypoint.sh"]
+    volumes:
+    - authentication-volume:/opt/blackduck/hub/hub-authentication/security
+    links:
+    - logstash:logstash
+    - zookeeper:zookeeper
+    - registration:registration
+    - solr:solr
+    - postgres:postgres
+    - cfssl:cfssl
+    volumes_from:
+    - healthcheck-helper-authentication
+    user: authentication:root
+    labels:
+      io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
+      io.rancher.sidekicks: healthcheck-helper-authentication
+  healthcheck-helper-authentication:
+    image: murkm/heathcliff:0.0.2
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.container.start_once: 'true'
