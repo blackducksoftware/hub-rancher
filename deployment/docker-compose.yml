@@ -1,7 +1,7 @@
 version: '2'
 services:
   webapp:
-    image: blackducksoftware/hub-webapp:4.6.1
+    image: blackducksoftware/hub-webapp:4.7.0
     environment:
       HUB_MAX_MEMORY: 9600m
       HUB_POSTGRES_ADMIN: blackduck
@@ -10,7 +10,7 @@ services:
       HUB_POSTGRES_PORT: '5432'
       HUB_POSTGRES_USER: blackduck_user
       HUB_PROXY_NON_PROXY_HOSTS: solr
-      HUB_VERSION: 4.6.1
+      HUB_VERSION: 4.7.0
       ENTRYPOINT: docker-entrypoint.sh catalina.sh run
       HEALTHCHECK: "/usr/local/bin/docker-healthcheck.sh https://127.0.0.1:8443/api/health-checks/liveness /opt/blackduck/hub/hub-webapp/security/root.crt"
       WRAPPER: /opt/crate/heathcliff/healthchecks/wrapper.sh
@@ -38,7 +38,7 @@ services:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
   zookeeper:
-    image: blackducksoftware/hub-zookeeper:4.6.1
+    image: blackducksoftware/hub-zookeeper:4.7.0
     environment:
       ENTRYPOINT: docker-entrypoint.sh zkServer.sh start-foreground /opt/blackduck/zookeeper/conf/zoo.cfg
       HEALTHCHECK: "zkServer.sh status /opt/blackduck/zookeeper/conf/zoo.cfg"
@@ -59,7 +59,7 @@ services:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
   documentation:
-    image: blackducksoftware/hub-documentation:4.6.1
+    image: blackducksoftware/hub-documentation:4.7.0
     environment:
       ENTRYPOINT: docker-entrypoint.sh catalina.sh run
       HEALTHCHECK: "/usr/local/bin/docker-healthcheck.sh https://127.0.0.1:8443/api/health-checks/liveness /opt/blackduck/hub/hub-authentication/security/root.crt"
@@ -80,7 +80,7 @@ services:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
   scan:
-    image: blackducksoftware/hub-scan:4.6.1
+    image: blackducksoftware/hub-scan:4.7.0
     environment:
       HUB_POSTGRES_ADMIN: blackduck
       HUB_POSTGRES_ENABLE_SSL: 'true'
@@ -118,7 +118,7 @@ services:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
   cfssl:
-    image: blackducksoftware/hub-cfssl:4.6.1
+    image: blackducksoftware/hub-cfssl:4.7.0
     environment:
       ENTRYPOINT: docker-entrypoint.sh
       HEALTHCHECK: "/usr/local/bin/docker-healthcheck.sh http://localhost:8888/api/v1/cfssl/scaninfo"
@@ -139,7 +139,7 @@ services:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
   jobrunner:
-    image: blackducksoftware/hub-jobrunner:4.6.1
+    image: blackducksoftware/hub-jobrunner:4.7.0
     environment:
       HUB_MAX_MEMORY: 9600m
       HUB_POSTGRES_ADMIN: blackduck
@@ -148,7 +148,7 @@ services:
       HUB_POSTGRES_PORT: '5432'
       HUB_POSTGRES_USER: blackduck_user
       HUB_PROXY_NON_PROXY_HOSTS: solr
-      HUB_VERSION: 4.6.1
+      HUB_VERSION: 4.7.0
       ENTRYPOINT: docker-entrypoint.sh jobrunner
       HEALTHCHECK: /usr/local/bin/docker-healthcheck.sh
       WRAPPER: /opt/crate/heathcliff/healthchecks/wrapper.sh
@@ -173,7 +173,7 @@ services:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
   logstash:
-    image: blackducksoftware/hub-logstash:4.6.1
+    image: blackducksoftware/hub-logstash:4.7.0
     environment:
       ENTRYPOINT: /usr/local/bin/docker-entrypoint.sh
       HEALTHCHECK:  "/usr/local/bin/docker-healthcheck.sh http://localhost:9600/"
@@ -194,7 +194,7 @@ services:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
   solr:
-    image: blackducksoftware/hub-solr:4.6.1
+    image: blackducksoftware/hub-solr:4.7.0
     environment:
       ENTRYPOINT: docker-entrypoint.sh solr-foreground
       HEALTHCHECK:  "/usr/local/bin/docker-healthcheck.sh http://localhost:8983/solr/project/admin/ping?wt=json"
@@ -218,10 +218,10 @@ services:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
   registration:
-    image: blackducksoftware/hub-registration:4.6.1
+    image: blackducksoftware/hub-registration:4.7.0
     environment:
       HUB_PROXY_NON_PROXY_HOSTS: solr
-      HUB_VERSION: 4.6.1
+      HUB_VERSION: 4.7.0
       ENTRYPOINT: docker-entrypoint.sh catalina.sh run
       HEALTHCHECK:  "/usr/local/bin/docker-healthcheck.sh https://localhost:8443/registration/health-checks/liveness /opt/blackduck/hub/hub-registration/security/root.crt"
       WRAPPER: /opt/crate/heathcliff/healthchecks/wrapper.sh
@@ -243,7 +243,7 @@ services:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
   webserver:
-    image: blackducksoftware/hub-nginx:4.6.1
+    image: blackducksoftware/hub-nginx:4.7.0
     environment:
       HUB_WEBSERVER_PORT: '8443'
       IPV4_ONLY: '1'
@@ -271,7 +271,7 @@ services:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
   postgres:
-    image: blackducksoftware/hub-postgres:4.6.1
+    image: blackducksoftware/hub-postgres:4.7.0
     environment:
       ENTRYPOINT: /hub-database.sh postgres
       HEALTHCHECK: /usr/local/bin/docker-healthcheck.sh
@@ -296,7 +296,7 @@ services:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
   authentication:
-    image: blackducksoftware/hub-authentication:4.6.1
+    image: blackducksoftware/hub-authentication:4.7.0
     environment:
       HUB_MAX_MEMORY: 9600m
       HUB_POSTGRES_ADMIN: blackduck
@@ -305,7 +305,7 @@ services:
       HUB_POSTGRES_PORT: '5432'
       HUB_POSTGRES_USER: blackduck_user
       HUB_PROXY_NON_PROXY_HOSTS: solr
-      HUB_VERSION: 4.6.1
+      HUB_VERSION: 4.7.0
       ENTRYPOINT: docker-entrypoint.sh
       HEALTHCHECK: "/usr/local/bin/docker-healthcheck.sh https://127.0.0.1:8443/api/health-checks/liveness"
       WRAPPER: /opt/crate/heathcliff/healthchecks/wrapper.sh
