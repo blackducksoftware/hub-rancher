@@ -1,0 +1,192 @@
+version: '2'
+services:
+  webapp:
+    scale: 1
+    health_check:
+      healthy_threshold: 2
+      response_timeout: 15000
+      port: 8000
+      unhealthy_threshold: 3
+      initializing_timeout: 60000
+      interval: 2000
+      strategy: recreate
+      request_line: GET "/cgi-bin/docker-healthcheck.sh" "HTTP/1.0"
+      reinitializing_timeout: 60000
+  healthcheck-helper-webapp:
+    scale: 1
+    start_on_create: true
+  zookeeper:
+    scale: 1
+    start_on_create: true
+    health_check:
+      healthy_threshold: 2
+      response_timeout: 15000
+      port: 8000
+      unhealthy_threshold: 3
+      initializing_timeout: 60000
+      interval: 2000
+      strategy: recreate
+      request_line: GET "/cgi-bin/docker-healthcheck.sh" "HTTP/1.0"
+      reinitializing_timeout: 60000
+  healthcheck-helper-zookeeper:
+    scale: 1
+    start_on_create: true
+  documentation:
+    scale: 1
+    start_on_create: true
+    health_check:
+      healthy_threshold: 2
+      response_timeout: 15000
+      port: 8000
+      unhealthy_threshold: 3
+      initializing_timeout: 60000
+      interval: 2000
+      strategy: recreate
+      request_line: GET "/cgi-bin/docker-healthcheck.sh" "HTTP/1.0"
+      reinitializing_timeout: 60000
+  healthcheck-helper-documentation:
+    scale: 1
+    start_on_create: true
+  scan:
+    scale: 1
+    start_on_create: true
+    health_check:
+      healthy_threshold: 2
+      response_timeout: 15000
+      port: 8000
+      unhealthy_threshold: 3
+      initializing_timeout: 60000
+      interval: 2000
+      strategy: recreate
+      request_line: GET "/cgi-bin/docker-healthcheck.sh" "HTTP/1.0"
+      reinitializing_timeout: 60000
+  healthcheck-helper-scan:
+    scale: 1
+    start_on_create: true
+  cfssl:
+    scale: 1
+    start_on_create: true
+    health_check:
+      healthy_threshold: 2
+      response_timeout: 15000
+      port: 8000
+      unhealthy_threshold: 3
+      initializing_timeout: 60000
+      interval: 2000
+      strategy: recreate
+      request_line: GET "/cgi-bin/docker-healthcheck.sh" "HTTP/1.0"
+      reinitializing_timeout: 60000
+  healthcheck-helper-cfssl:
+    scale: 1
+    start_on_create: true
+  jobrunner:
+    scale: 1
+    health_check:
+      healthy_threshold: 2
+      response_timeout: 15000
+      port: 8000
+      unhealthy_threshold: 3
+      initializing_timeout: 60000
+      interval: 2000
+      strategy: recreate
+      request_line: GET "/cgi-bin/docker-healthcheck.sh" "HTTP/1.0"
+      reinitializing_timeout: 60000
+  healthcheck-helper-jobrunner:
+    scale: 1
+    start_on_create: true
+  logstash:
+    scale: 1
+    start_on_create: true
+    health_check:
+      healthy_threshold: 2
+      response_timeout: 15000
+      port: 8000
+      unhealthy_threshold: 3
+      initializing_timeout: 60000
+      interval: 2000
+      strategy: recreate
+      request_line: GET "/cgi-bin/docker-healthcheck.sh" "HTTP/1.0"
+      reinitializing_timeout: 60000
+  healthcheck-helper-logstash:
+    scale: 1
+    start_on_create: true
+  solr:
+    scale: 1
+    start_on_create: true
+    health_check:
+      healthy_threshold: 2
+      response_timeout: 15000
+      port: 8000
+      unhealthy_threshold: 3
+      initializing_timeout: 60000
+      interval: 2000
+      strategy: recreate
+      request_line: GET "/cgi-bin/docker-healthcheck.sh" "HTTP/1.0"
+      reinitializing_timeout: 60000
+  healthcheck-helper-solr:
+    scale: 1
+    start_on_create: true
+  registration:
+    scale: 1
+    start_on_create: true
+    health_check:
+      healthy_threshold: 2
+      response_timeout: 15000
+      port: 8000
+      unhealthy_threshold: 3
+      initializing_timeout: 60000
+      interval: 2000
+      strategy: recreate
+      request_line: GET "/cgi-bin/docker-healthcheck.sh" "HTTP/1.0"
+      reinitializing_timeout: 60000
+  healthcheck-helper-registration:
+    scale: 1
+    start_on_create: true
+  webserver:
+    scale: 1
+    start_on_create: true
+    health_check:
+      healthy_threshold: 2
+      response_timeout: 15000
+      port: 8000
+      unhealthy_threshold: 3
+      initializing_timeout: 60000
+      interval: 2000
+      strategy: recreate
+      request_line: GET "/cgi-bin/docker-healthcheck.sh" "HTTP/1.0"
+      reinitializing_timeout: 60000
+  healthcheck-helper-webserver:
+    scale: 1
+    start_on_create: true
+  postgres:
+    scale: 1
+    start_on_create: true
+    health_check:
+      healthy_threshold: 2
+      response_timeout: 15000
+      port: 8000
+      unhealthy_threshold: 3
+      initializing_timeout: 60000
+      interval: 2000
+      strategy: recreate
+      request_line: GET "/cgi-bin/docker-healthcheck.sh" "HTTP/1.0"
+      reinitializing_timeout: 60000
+  healthcheck-helper-postgres:
+    scale: 1
+    start_on_create: true
+  authentication:
+    scale: 1
+    start_on_create: true
+    health_check:
+      healthy_threshold: 2
+      response_timeout: 15000
+      port: 8000
+      unhealthy_threshold: 3
+      initializing_timeout: 60000
+      interval: 2000
+      strategy: recreate
+      request_line: GET "/cgi-bin/docker-healthcheck.sh" "HTTP/1.0"
+      reinitializing_timeout: 60000
+  healthcheck-helper-authentication:
+    scale: 1
+    start_on_create: true
