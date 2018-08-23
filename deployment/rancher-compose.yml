@@ -4,14 +4,14 @@ services:
     scale: 1
     health_check:
       healthy_threshold: 2
-      response_timeout: 15000
+      response_timeout: 160000
       port: 8000
-      unhealthy_threshold: 3
-      initializing_timeout: 60000
-      interval: 2000
+      unhealthy_threshold: 15
+      initializing_timeout: 160000
+      interval: 30000
       strategy: recreate
       request_line: GET "/cgi-bin/docker-healthcheck.sh" "HTTP/1.0"
-      reinitializing_timeout: 60000
+      reinitializing_timeout: 160000
   healthcheck-helper-webapp:
     scale: 1
     start_on_create: true
@@ -22,9 +22,9 @@ services:
       healthy_threshold: 2
       response_timeout: 15000
       port: 8000
-      unhealthy_threshold: 3
+      unhealthy_threshold: 5
       initializing_timeout: 60000
-      interval: 2000
+      interval: 30000
       strategy: recreate
       request_line: GET "/cgi-bin/docker-healthcheck.sh" "HTTP/1.0"
       reinitializing_timeout: 60000
@@ -38,9 +38,9 @@ services:
       healthy_threshold: 2
       response_timeout: 15000
       port: 8000
-      unhealthy_threshold: 3
+      unhealthy_threshold: 5
       initializing_timeout: 60000
-      interval: 2000
+      interval: 30000
       strategy: recreate
       request_line: GET "/cgi-bin/docker-healthcheck.sh" "HTTP/1.0"
       reinitializing_timeout: 60000
@@ -52,11 +52,11 @@ services:
     start_on_create: true
     health_check:
       healthy_threshold: 2
-      response_timeout: 15000
+      response_timeout: 60000
       port: 8000
-      unhealthy_threshold: 3
+      unhealthy_threshold: 10
       initializing_timeout: 60000
-      interval: 2000
+      interval: 30000
       strategy: recreate
       request_line: GET "/cgi-bin/docker-healthcheck.sh" "HTTP/1.0"
       reinitializing_timeout: 60000
@@ -70,9 +70,9 @@ services:
       healthy_threshold: 2
       response_timeout: 15000
       port: 8000
-      unhealthy_threshold: 3
+      unhealthy_threshold: 5
       initializing_timeout: 60000
-      interval: 2000
+      interval: 30000
       strategy: recreate
       request_line: GET "/cgi-bin/docker-healthcheck.sh" "HTTP/1.0"
       reinitializing_timeout: 60000
@@ -83,11 +83,11 @@ services:
     scale: 1
     health_check:
       healthy_threshold: 2
-      response_timeout: 15000
+      response_timeout: 60000
       port: 8000
-      unhealthy_threshold: 3
+      unhealthy_threshold: 10
       initializing_timeout: 60000
-      interval: 2000
+      interval: 30000
       strategy: recreate
       request_line: GET "/cgi-bin/docker-healthcheck.sh" "HTTP/1.0"
       reinitializing_timeout: 60000
@@ -101,9 +101,9 @@ services:
       healthy_threshold: 2
       response_timeout: 15000
       port: 8000
-      unhealthy_threshold: 3
+      unhealthy_threshold: 5
       initializing_timeout: 60000
-      interval: 2000
+      interval: 30000
       strategy: recreate
       request_line: GET "/cgi-bin/docker-healthcheck.sh" "HTTP/1.0"
       reinitializing_timeout: 60000
@@ -117,9 +117,9 @@ services:
       healthy_threshold: 2
       response_timeout: 15000
       port: 8000
-      unhealthy_threshold: 3
+      unhealthy_threshold: 5
       initializing_timeout: 60000
-      interval: 2000
+      interval: 30000
       strategy: recreate
       request_line: GET "/cgi-bin/docker-healthcheck.sh" "HTTP/1.0"
       reinitializing_timeout: 60000
@@ -133,9 +133,9 @@ services:
       healthy_threshold: 2
       response_timeout: 15000
       port: 8000
-      unhealthy_threshold: 3
+      unhealthy_threshold: 5
       initializing_timeout: 60000
-      interval: 2000
+      interval: 30000
       strategy: recreate
       request_line: GET "/cgi-bin/docker-healthcheck.sh" "HTTP/1.0"
       reinitializing_timeout: 60000
@@ -149,9 +149,9 @@ services:
       healthy_threshold: 2
       response_timeout: 15000
       port: 8000
-      unhealthy_threshold: 3
+      unhealthy_threshold: 5
       initializing_timeout: 60000
-      interval: 2000
+      interval: 30000
       strategy: recreate
       request_line: GET "/cgi-bin/docker-healthcheck.sh" "HTTP/1.0"
       reinitializing_timeout: 60000
@@ -165,9 +165,9 @@ services:
       healthy_threshold: 2
       response_timeout: 15000
       port: 8000
-      unhealthy_threshold: 3
+      unhealthy_threshold: 5
       initializing_timeout: 60000
-      interval: 2000
+      interval: 30000
       strategy: recreate
       request_line: GET "/cgi-bin/docker-healthcheck.sh" "HTTP/1.0"
       reinitializing_timeout: 60000
@@ -179,11 +179,11 @@ services:
     start_on_create: true
     health_check:
       healthy_threshold: 2
-      response_timeout: 15000
+      response_timeout: 60000
       port: 8000
-      unhealthy_threshold: 3
+      unhealthy_threshold: 10
       initializing_timeout: 60000
-      interval: 2000
+      interval: 30000
       strategy: recreate
       request_line: GET "/cgi-bin/docker-healthcheck.sh" "HTTP/1.0"
       reinitializing_timeout: 60000

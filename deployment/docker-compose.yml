@@ -33,7 +33,7 @@ services:
       io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
       io.rancher.sidekicks: healthcheck-helper-webapp
   healthcheck-helper-webapp:
-    image: murkm/heathcliff:0.0.2
+    image: murkm/heathcliff:0.0.3
     labels:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
@@ -57,7 +57,7 @@ services:
       io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
       io.rancher.sidekicks: healthcheck-helper-zookeeper
   healthcheck-helper-zookeeper:
-    image: murkm/heathcliff:0.0.2
+    image: murkm/heathcliff:0.0.3
     labels:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
@@ -78,7 +78,7 @@ services:
       io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
       io.rancher.sidekicks: healthcheck-helper-documentation
   healthcheck-helper-documentation:
-    image: murkm/heathcliff:0.0.2
+    image: murkm/heathcliff:0.0.3
     labels:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
@@ -116,7 +116,7 @@ services:
       io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
       io.rancher.sidekicks: healthcheck-helper-scan
   healthcheck-helper-scan:
-    image: murkm/heathcliff:0.0.2
+    image: murkm/heathcliff:0.0.3
     labels:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
@@ -137,7 +137,7 @@ services:
       io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
       io.rancher.sidekicks: healthcheck-helper-cfssl
   healthcheck-helper-cfssl:
-    image: murkm/heathcliff:0.0.2
+    image: murkm/heathcliff:0.0.3
     labels:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
@@ -171,7 +171,7 @@ services:
       io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
       io.rancher.sidekicks: healthcheck-helper-jobrunner
   healthcheck-helper-jobrunner:
-    image: murkm/heathcliff:0.0.2
+    image: murkm/heathcliff:0.0.3
     labels:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
@@ -192,7 +192,7 @@ services:
       io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
       io.rancher.sidekicks: healthcheck-helper-logstash
   healthcheck-helper-logstash:
-    image: murkm/heathcliff:0.0.2
+    image: murkm/heathcliff:0.0.3
     labels:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
@@ -216,7 +216,7 @@ services:
       io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
       io.rancher.sidekicks: healthcheck-helper-solr
   healthcheck-helper-solr:
-    image: murkm/heathcliff:0.0.2
+    image: murkm/heathcliff:0.0.3
     labels:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
@@ -241,12 +241,13 @@ services:
       io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
       io.rancher.sidekicks: healthcheck-helper-registration
   healthcheck-helper-registration:
-    image: murkm/heathcliff:0.0.2
+    image: murkm/heathcliff:0.0.3
     labels:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
   webserver:
-    image: blackducksoftware/hub-nginx:4.8.1
+#    image: blackducksoftware/hub-nginx:4.8.1
+    image: murkm/hub-nginx:4.8.1cattle0
     environment:
       HUB_WEBSERVER_PORT: '8443'
       IPV4_ONLY: '1'
@@ -269,7 +270,7 @@ services:
       io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
       io.rancher.sidekicks: healthcheck-helper-webserver
   healthcheck-helper-webserver:
-    image: murkm/heathcliff:0.0.2
+    image: murkm/heathcliff:0.0.3
     labels:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
@@ -294,7 +295,7 @@ services:
       io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
       io.rancher.sidekicks: healthcheck-helper-postgres
   healthcheck-helper-postgres:
-    image: murkm/heathcliff:0.0.2
+    image: murkm/heathcliff:0.0.3
     labels:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
@@ -329,7 +330,7 @@ services:
       io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
       io.rancher.sidekicks: healthcheck-helper-authentication
   healthcheck-helper-authentication:
-    image: murkm/heathcliff:0.0.2
+    image: murkm/heathcliff:0.0.3
     labels:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
