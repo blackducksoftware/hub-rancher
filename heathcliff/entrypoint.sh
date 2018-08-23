@@ -9,4 +9,4 @@ mkdir -p /tmp/www/cgi-bin &&\
     chmod +x /tmp/www/cgi-bin &&\
     /opt/crate/heathcliff/healthchecks/busybox httpd -h /tmp/www -p 8000
 
-exec $ENTRYPOINT
+sh $ENTRYPOINT
