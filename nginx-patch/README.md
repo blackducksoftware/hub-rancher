@@ -14,7 +14,7 @@ To force NGINX to query DNS we introduce variables in the proxy pass statement, 
 ```
     location / {
        . . . 
-       proxy_pass https://$webapp_upstream:${HUB_WEBAPP_PORT};
+       proxy_pass https://${HUB_WEBAPP_HOST}:${HUB_WEBAPP_PORT};
        . . .
 ```
 
