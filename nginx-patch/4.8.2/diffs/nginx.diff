@@ -1,0 +1,40 @@
+--- nginx.conf.template.orig	2018-09-19 11:49:58.000000000 -0400
++++ nginx.conf.template	2018-09-19 12:00:55.000000000 -0400
+@@ -74,6 +74,7 @@
+     # Possibly include alert routes and configuration.
+     ${NO_ALERT}include /etc/nginx/alert.nginx.conf;
+ 
++    set $doc_upstream ${HUB_DOC_HOST};
+     location /doc {
+       client_max_body_size 1024m;
+       client_body_timeout 3600s;
+@@ -84,9 +85,9 @@
+ 
+       # Handle case where MadCap Flare sends invalid URI characters in query parameters.
+       if ($request_uri ~ "^/doc(/.+)\?.*$") {
+-        proxy_pass https://${HUB_DOC_HOST}:${HUB_DOC_PORT}/hubdoc/help$1;
++        proxy_pass https://$doc_upstream:${HUB_DOC_PORT}/hubdoc/help$1;
+       }
+-      proxy_pass https://${HUB_DOC_HOST}:${HUB_DOC_PORT}/hubdoc/help; # Fallback as-is.
++      proxy_pass https://$doc_upstream:${HUB_DOC_PORT}/hubdoc/help; # Fallback as-is.
+ 
+       proxy_pass_header X-BDS-AuthToken;
+       proxy_read_timeout 3600;
+@@ -110,6 +111,8 @@
+       deny all;
+     }
+     
++    resolver 169.254.169.250;
++    set $webapp_upstream ${HUB_WEBAPP_HOST};
+     location / {
+       client_max_body_size 3072m;
+       client_body_timeout 3600s;
+@@ -118,7 +121,7 @@
+       }
+       proxy_connect_timeout 60;
+       proxy_intercept_errors on;
+-      proxy_pass https://${HUB_WEBAPP_HOST}:${HUB_WEBAPP_PORT}/;
++      proxy_pass https://$webapp_upstream:${HUB_WEBAPP_PORT};
+       proxy_pass_header X-Host;
+       proxy_read_timeout 3600;
+       proxy_redirect off;

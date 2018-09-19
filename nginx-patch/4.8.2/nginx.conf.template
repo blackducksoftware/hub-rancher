@@ -1,0 +1,151 @@
+worker_processes 1;
+
+events {
+  worker_connections  1024;
+}
+
+error_log /var/log/nginx/error.log warn;
+
+http {
+  log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                    '$status $body_bytes_sent "$http_referer" '
+                    '"$http_user_agent" "$http_x_forwarded_for"';
+
+  # Map the passed in X-Forwarded-Host if present and default to the server host otherwise.
+  map $http_x_forwarded_host $proxy_x_forwarded_host {
+    default $http_x_forwarded_host;
+    ''      $host;
+  }
+
+  # Map the passed in X-Forwarded-Port if present and default to the server port otherwise.
+  map $http_x_forwarded_port $proxy_x_forwarded_port {
+    default $http_x_forwarded_port;
+    ''      ${PUBLIC_HUB_WEBSERVER_PORT};
+  }
+
+  # Map the passed in X-Forwarded-Proto if present and default to the server scheme otherwise.
+  map $http_x_forwarded_proto $proxy_x_forwarded_proto {
+    default $http_x_forwarded_proto;
+    ''      $scheme;
+  }
+
+  server {
+    listen ${HUB_WEBSERVER_PORT} default_server ssl;
+    ${NO_IPV6}listen [::]:${HUB_WEBSERVER_PORT} default_server ssl;
+    	
+    access_log 			/var/log/nginx/nginx-access.log main;
+    	
+    server_name 		localhost; 
+
+    large_client_header_buffers 4 ${HUB_REQUEST_HEADER_SIZE};
+	
+    ssl_certificate 	${WEBSERVER_CERT}; #customers need to change this field
+    ssl_certificate_key ${WEBSERVER_KEY};
+    ssl_protocols       ${TLS_PROTOCOLS};
+
+    # Intermediate configuration from Mozilla SSL generator
+    ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:ECDHE-ECDSA-DES-CBC3-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA:!DSS';
+    ssl_prefer_server_ciphers on;
+    
+    proxy_ssl_trusted_certificate 	${WEBSERVER_ROOT_CERT_PATH};
+    proxy_ssl_protocols           	TLSv1.2;
+    proxy_ssl_session_reuse 		on;
+	  proxy_ssl_verify        		on;
+	
+    location /health-checks/liveness {
+      add_header Content-Type "application/json";
+      return 200 '{ "healthy": true }';
+    }
+
+    location /health-checks/readiness {
+      add_header Content-Type "application/json";
+      return 200 '{ "healthy": true }';
+    }
+   
+    # Include authentication routes and configuration.
+    include /etc/nginx/authentication.nginx.conf;
+
+    # Include scan routes and configuration
+    include /etc/nginx/scan.nginx.conf;
+
+    # Include upload routes and configuration
+    ${NO_BINARY_UPLOADS}include /etc/nginx/upload.nginx.conf;
+
+    # Possibly include alert routes and configuration.
+    ${NO_ALERT}include /etc/nginx/alert.nginx.conf;
+
+    set $doc_upstream ${HUB_DOC_HOST};
+    location /doc {
+      client_max_body_size 1024m;
+      client_body_timeout 3600s;
+      error_page 500 502 503 504 /error.html;
+      proxy_connect_timeout 60;
+      proxy_intercept_errors on;
+      proxy_ssl_verify ${DOC_SSL_VERIFY};
+
+      # Handle case where MadCap Flare sends invalid URI characters in query parameters.
+      if ($request_uri ~ "^/doc(/.+)\?.*$") {
+        proxy_pass https://$doc_upstream:${HUB_DOC_PORT}/hubdoc/help$1;
+      }
+      proxy_pass https://$doc_upstream:${HUB_DOC_PORT}/hubdoc/help; # Fallback as-is.
+
+      proxy_pass_header X-BDS-AuthToken;
+      proxy_read_timeout 3600;
+      proxy_redirect off;
+      proxy_send_timeout 60;
+      proxy_set_header Host $host:$server_port;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Host $proxy_x_forwarded_host;
+      proxy_set_header X-Forwarded-Port $proxy_x_forwarded_port;
+      proxy_set_header X-Forwarded-Proto $proxy_x_forwarded_proto;
+      
+      add_header X-Frame-Options SAMEORIGIN;
+      add_header X-Content-Type-Options nosniff;
+      add_header X-XSS-Protection "1; mode=block";
+      add_header Cache-Control "no-cache, no-store, must-revalidate";
+      add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    }
+  
+    location /metrics {
+      deny all;
+    }
+    
+    resolver 169.254.169.250;
+    set $webapp_upstream ${HUB_WEBAPP_HOST};
+    location / {
+      client_max_body_size 3072m;
+      client_body_timeout 3600s;
+      if ($http_content_type ~ (!(.*application/json)) ) {
+            error_page 500 502 503 504 /error.html;
+      }
+      proxy_connect_timeout 60;
+      proxy_intercept_errors on;
+      proxy_pass https://$webapp_upstream:${HUB_WEBAPP_PORT};
+      proxy_pass_header X-Host;
+      proxy_read_timeout 3600;
+      proxy_redirect off;
+      proxy_send_timeout 60;
+      proxy_set_header Host $host:$server_port;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Host $proxy_x_forwarded_host;
+      proxy_set_header X-Forwarded-Port $proxy_x_forwarded_port;
+      proxy_set_header X-Forwarded-Proto $proxy_x_forwarded_proto;
+      proxy_cookie_path / "/; secure";
+      proxy_buffers 8 512k;
+      proxy_buffer_size 2048k;
+      proxy_busy_buffers_size 2048k;
+      
+      add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+      add_header X-Frame-Options SAMEORIGIN;
+    }
+    
+    location = /error.html {
+      root /opt/blackduck/hub/webserver/html;
+      internal;
+    }
+  }
+    
+  include /etc/nginx/conf.d/*.conf;
+}

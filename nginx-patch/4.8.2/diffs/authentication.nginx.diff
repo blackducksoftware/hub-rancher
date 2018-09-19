@@ -1,0 +1,82 @@
+--- authentication.nginx.conf.template.orig	2018-09-19 12:32:27.000000000 -0400
++++ authentication.nginx.conf.template	2018-09-19 12:29:58.000000000 -0400
+@@ -5,6 +5,7 @@
+ # POST             /api/v1/ldap/configs/test
+ # POST             /api/v1/ldap-certificates
+ 
++set $auth_upstream ${HUB_AUTHENTICATION_HOST};
+ location ~ ^/(api/v1/ldap/state|api/v1/ldap/configs|api/v1/ldap/configs/([a-f0-9\-]+)|api/v1/ldap-certificates)/?$ {
+     client_max_body_size 3072m;
+     client_body_timeout 3600s;
+@@ -13,7 +14,7 @@
+     }
+     proxy_connect_timeout 60;
+     proxy_intercept_errors on;
+-    proxy_pass https://${HUB_AUTHENTICATION_HOST}:${HUB_AUTHENTICATION_PORT};
++    proxy_pass https://$auth_upstream:${HUB_AUTHENTICATION_PORT};
+     proxy_pass_header X-Host;
+     proxy_read_timeout 3600;
+     proxy_redirect off;
+@@ -38,7 +39,7 @@
+     error_page 500 503 504 /error.html; # Do not redirect for 502 Bad Gateway
+     proxy_connect_timeout 60;
+     proxy_intercept_errors on;
+-    proxy_pass https://${HUB_AUTHENTICATION_HOST}:${HUB_AUTHENTICATION_PORT};
++    proxy_pass https://$auth_upstream:${HUB_AUTHENTICATION_PORT};
+     proxy_pass_header X-Host;
+     proxy_read_timeout 3600;
+     proxy_redirect off;
+@@ -70,7 +71,7 @@
+     }
+     proxy_connect_timeout 60;
+     proxy_intercept_errors on;
+-    proxy_pass https://${HUB_AUTHENTICATION_HOST}:${HUB_AUTHENTICATION_PORT};
++    proxy_pass https://$auth_upstream:${HUB_AUTHENTICATION_PORT};
+     proxy_pass_header X-Host;
+     proxy_read_timeout 3600;
+     proxy_redirect off;
+@@ -101,7 +102,7 @@
+     }
+     proxy_connect_timeout 60;
+     proxy_intercept_errors on;
+-    proxy_pass https://${HUB_AUTHENTICATION_HOST}:${HUB_AUTHENTICATION_PORT};
++    proxy_pass https://$auth_upstream:${HUB_AUTHENTICATION_PORT};
+     proxy_pass_header X-Host;
+     proxy_read_timeout 3600;
+     proxy_redirect off;
+@@ -139,7 +140,7 @@
+     }
+     proxy_connect_timeout 60;
+     proxy_intercept_errors on;
+-    proxy_pass https://${HUB_AUTHENTICATION_HOST}:${HUB_AUTHENTICATION_PORT};
++    proxy_pass https://$auth_upstream:${HUB_AUTHENTICATION_PORT};
+     proxy_pass_header X-Host;
+     proxy_read_timeout 3600;
+     proxy_redirect off;
+@@ -175,7 +176,7 @@
+     }
+     proxy_connect_timeout 60;
+     proxy_intercept_errors on;
+-    proxy_pass https://${HUB_AUTHENTICATION_HOST}:${HUB_AUTHENTICATION_PORT};
++    proxy_pass https://$auth_upstream:${HUB_AUTHENTICATION_PORT};
+     proxy_pass_header X-Host;
+     proxy_read_timeout 3600;
+     proxy_redirect off;
+@@ -206,7 +207,7 @@
+     }
+     proxy_connect_timeout 60;
+     proxy_intercept_errors on;
+-    proxy_pass https://${HUB_AUTHENTICATION_HOST}:${HUB_AUTHENTICATION_PORT};
++    proxy_pass https://$auth_upstream:${HUB_AUTHENTICATION_PORT};
+     proxy_pass_header X-Host;
+     proxy_read_timeout 3600;
+     proxy_redirect off;
+@@ -236,7 +237,7 @@
+     }
+      proxy_connect_timeout 60;
+         proxy_intercept_errors on;
+-        proxy_pass https://${HUB_AUTHENTICATION_HOST}:${HUB_AUTHENTICATION_PORT};
++        proxy_pass https://$auth_upstream:${HUB_AUTHENTICATION_PORT};
+         proxy_pass_header X-Host;
+         proxy_read_timeout 3600;
+         proxy_redirect off;
