@@ -1,0 +1,17 @@
+--- alert.nginx.conf.template.orig	2018-09-21 09:50:04.000000000 -0400
++++ alert.nginx.conf.template	2018-09-21 09:50:04.000000000 -0400
+@@ -1,12 +1,13 @@
+ ### Alert APIs
+ # * /alert/*
+ 
++set $alert_upstream ${HUB_ALERT_HOST};
+ location /alert {
+     client_max_body_size 3072m;
+     client_body_timeout 3600s;
+     proxy_connect_timeout 60;
+     proxy_intercept_errors on;
+-    proxy_pass https://${HUB_ALERT_HOST}:${HUB_ALERT_PORT};
++    proxy_pass https://$alert_upstream:${HUB_ALERT_PORT};
+     proxy_pass_header X-Host;
+     proxy_read_timeout 3600;
+     proxy_redirect off;
