@@ -11,7 +11,7 @@ External database chould have blackduck user set up as adminstrator. It has to h
 
 Execute database configuration script
 
-'''
+''''
 $ cat external-postgres-init.pgsql | psql -h hubdb.c7zis2ewum4b.us-east-1.rds.amazonaws.com -U blackduck postgres 
 Password for user blackduck: 
 CREATE DATABASE
@@ -36,7 +36,7 @@ ALTER DEFAULT PRIVILEGES
 You are now connected to database "bdio" as user "blackduck".
 GRANT
 $ 
-'''
+''''
 
 Log into the database and set passwords for blackduck_user and blackduck_reporter
 
