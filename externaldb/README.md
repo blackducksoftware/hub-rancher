@@ -2,7 +2,7 @@
 
 ## Activate Rancher Secrets serivce for your environment
 
-Rancher Secrets has to be running in your environment. Secrets are going to be used to manage passwords necessary for authenticating with the database.
+Rancher Secrets has to be running in your environment. Secrets are going to be used to manage passwords necessary for authenticating with the database. See Ranched [docs](https://rancher.com/docs/rancher/v1.6/en/cattle/secrets/) for details.
 
 ## Configure the external database instance
 
@@ -39,6 +39,13 @@ $
 ```
 
 Log into the database and set passwords for blackduck_user and blackduck_reporter
+
+```
+postgres=> alter user blackduck_user with password '<password goes here>';
+ALTER ROLE
+postgres=> alter user blackduck_reporter with password '<password goes here>';
+ALTER ROLE
+```
 
 
 ## Optional restore database if necessary
