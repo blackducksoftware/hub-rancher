@@ -2,7 +2,7 @@
 
 ## Activate Rancher Secrets serivce for your environment
 
-Rancher Secrets has to ve running in your environment. Secrets are going to be used to manage passwords necessary for authenticating with the database.
+Rancher Secrets has to be running in your environment. Secrets are going to be used to manage passwords necessary for authenticating with the database.
 
 ## Configure the external database instance
 
