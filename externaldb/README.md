@@ -52,7 +52,7 @@ ALTER ROLE
 
 ## Prepare deployment files
 
-Modify docker-compose.yml file to reflect database configuration
+Modify **docker-compose-extdb.yml** file to reflect database configuration
 
 
 Set environment variabmes for webapp, scan, jobrunner and authentication containers as following:
@@ -74,5 +74,8 @@ Create secrets with passwords for blackduck and blackduck_user
 
 Alternatively secrets could be created from Rancher UI
 
-## Deploy stack using provided deployment files
-
+## Deploy stack using prepared deployment files
+```
+docker-compose-extdb.yml
+rancher-compose-extdb.yml
+```
