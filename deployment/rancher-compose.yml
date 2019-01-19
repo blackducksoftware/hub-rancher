@@ -4,10 +4,10 @@ services:
     scale: 1
     health_check:
       healthy_threshold: 2
-      response_timeout: 80000
+      response_timeout: 100000
       port: 8000
       unhealthy_threshold: 15
-      initializing_timeout: 80000
+      initializing_timeout: 100000
       interval: 30000
       strategy: recreate
       request_line: GET "/cgi-bin/docker-healthcheck.sh" "HTTP/1.0"
