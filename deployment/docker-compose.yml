@@ -351,7 +351,7 @@ services:
       HUB_POSTGRES_USER: blackduck_user
       HUB_PROXY_NON_PROXY_HOSTS: solr
       HUB_VERSION: 2019.4.2
-      ENTRYPOINT: docker-entrypoint.sh
+      ENTRYPOINT: /opt/blackduck/hub/blackduck-upload-cache/bin/docker-entrypoint.sh
       HEALTHCHECK: "/usr/local/bin/healthcheck.sh 'https://localhost:8086/live?full=1' /opt/blackduck/hub/blackduck-upload-cache/security/root.crt"
       WRAPPER: /opt/crate/heathcliff/healthchecks/wrapper.sh
     entrypoint: ["sh", "-c", "/opt/crate/heathcliff/entrypoint.sh"]
