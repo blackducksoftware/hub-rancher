@@ -1,7 +1,7 @@
 version: '2'
 services:
   webapp:
-    image: blackducksoftware/blackduck-webapp:2019.4.2
+    image: blackducksoftware/blackduck-webapp:2019.6.0
     environment:
       HUB_MAX_MEMORY: 9600m
       HUB_POSTGRES_ADMIN: blackduck
@@ -9,8 +9,7 @@ services:
       HUB_POSTGRES_HOST: postgres
       HUB_POSTGRES_PORT: '5432'
       HUB_POSTGRES_USER: blackduck_user
-      HUB_PROXY_NON_PROXY_HOSTS: solr
-      HUB_VERSION: 2019.4.2
+      HUB_VERSION: 2019.6.0
       BLACKDUCK_REPORT_IGNORED_COMPONENTS: 'false'
       ENTRYPOINT: docker-entrypoint.sh catalina.sh run
       HEALTHCHECK: "/usr/local/bin/docker-healthcheck.sh https://localhost:8443/api/health-checks/liveness /opt/blackduck/hub/hub-webapp/security/root.crt /opt/blackduck/hub/hub-webapp/security/blackduck_system.crt /opt/blackduck/hub/hub-webapp/security/blackduck_system.key"
@@ -26,7 +25,6 @@ services:
     - registration:registration
     - zookeeper:zookeeper
     - postgres:postgres
-    - solr:solr
     volumes_from:
     - healthcheck-helper-webapp
     user: tomcat:root
@@ -63,7 +61,7 @@ services:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
   documentation:
-    image: blackducksoftware/blackduck-documentation:2019.4.2
+    image: blackducksoftware/blackduck-documentation:2019.6.0
     environment:
       ENTRYPOINT: docker-entrypoint.sh catalina.sh run
       HEALTHCHECK: "/usr/local/bin/docker-healthcheck.sh https://127.0.0.1:8443/api/health-checks/liveness /opt/blackduck/hub/hub-authentication/security/root.crt"
@@ -84,14 +82,14 @@ services:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
   scan:
-    image: blackducksoftware/blackduck-scan:2019.4.2
+    image: blackducksoftware/blackduck-scan:2019.6.0
     environment:
       HUB_POSTGRES_ADMIN: blackduck
       HUB_POSTGRES_ENABLE_SSL: 'true'
       HUB_POSTGRES_HOST: postgres
       HUB_POSTGRES_PORT: '5432'
       HUB_POSTGRES_USER: blackduck_user
-      HUB_VERSION: 2019.4.2
+      HUB_VERSION: 2019.6.0
       BLACKDUCK_REPORT_IGNORED_COMPONENTS: false
       UB_MAX_MEMORY: 2048m
       ENTRYPOINT: docker-entrypoint.sh catalina.sh run
@@ -146,7 +144,7 @@ services:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
   jobrunner:
-    image: blackducksoftware/blackduck-jobrunner:2019.4.2
+    image: blackducksoftware/blackduck-jobrunner:2019.6.0
     environment:
       HUB_MAX_MEMORY: 9600m
       HUB_POSTGRES_ADMIN: blackduck
@@ -154,8 +152,7 @@ services:
       HUB_POSTGRES_HOST: postgres
       HUB_POSTGRES_PORT: '5432'
       HUB_POSTGRES_USER: blackduck_user
-      HUB_PROXY_NON_PROXY_HOSTS: solr
-      HUB_VERSION: 2019.4.2
+      HUB_VERSION: 2019.6.0
       BLACKDUCK_REPORT_IGNORED_COMPONENTS: false
       ENTRYPOINT: docker-entrypoint.sh jobrunner
       HEALTHCHECK: /usr/local/bin/docker-healthcheck.sh
@@ -166,7 +163,6 @@ services:
     - logstash:logstash
     - zookeeper:zookeeper
     - registration:registration
-    - solr:solr
     - postgres:postgres
     - cfssl:cfssl
     volumes_from:
@@ -202,35 +198,10 @@ services:
     labels:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
-  solr:
-    image: blackducksoftware/blackduck-solr:1.0.0
-    environment:
-      ENTRYPOINT: docker-entrypoint.sh solr-foreground
-      HEALTHCHECK:  "/usr/local/bin/docker-healthcheck.sh http://localhost:8983/solr/project/admin/ping?wt=json"
-      WRAPPER: /opt/crate/heathcliff/healthchecks/wrapper.sh
-    entrypoint: ["sh", "-c", "/opt/crate/heathcliff/entrypoint.sh"]
-    volumes:
-    - solr6-volume:/opt/blackduck/hub/solr/cores.data
-    mem_reservation: 671088640
-    links:
-    - logstash:logstash
-    - zookeeper:zookeeper
-    volumes_from:
-    - healthcheck-helper-solr
-    user: solr:root
-    labels:
-      io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
-      io.rancher.sidekicks: healthcheck-helper-solr
-  healthcheck-helper-solr:
-    image: murkm/heathcliff:0.0.3
-    labels:
-      io.rancher.container.pull_image: always
-      io.rancher.container.start_once: 'true'
   registration:
-    image: blackducksoftware/blackduck-registration:2019.4.2
+    image: blackducksoftware/blackduck-registration:2019.6.0
     environment:
-      HUB_PROXY_NON_PROXY_HOSTS: solr
-      HUB_VERSION: 2019.4.2
+      HUB_VERSION: 2019.6.0
       ENTRYPOINT: docker-entrypoint.sh catalina.sh run
       HEALTHCHECK:  "/usr/local/bin/docker-healthcheck.sh https://localhost:8443/registration/health-checks/liveness /opt/blackduck/hub/hub-registration/security/root.crt /opt/blackduck/hub/hub-registration/security/blackduck_system.crt /opt/blackduck/hub/hub-registration/security/blackduck_system.key"
       WRAPPER: /opt/crate/heathcliff/healthchecks/wrapper.sh
@@ -306,7 +277,7 @@ services:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
   authentication:
-    image: blackducksoftware/blackduck-authentication:2019.4.2
+    image: blackducksoftware/blackduck-authentication:2019.6.0
     environment:
       HUB_MAX_MEMORY: 9600m
       HUB_POSTGRES_ADMIN: blackduck
@@ -314,8 +285,7 @@ services:
       HUB_POSTGRES_HOST: postgres
       HUB_POSTGRES_PORT: '5432'
       HUB_POSTGRES_USER: blackduck_user
-      HUB_PROXY_NON_PROXY_HOSTS: solr
-      HUB_VERSION: 2019.4.2
+      HUB_VERSION: 2019.6.0
       ENTRYPOINT: docker-entrypoint.sh
       HEALTHCHECK: "/usr/local/bin/docker-healthcheck.sh https://localhost:8443/api/health-checks/liveness /opt/blackduck/hub/hub-authentication/security/root.crt /opt/blackduck/hub/hub-authentication/security/blackduck_system.crt /opt/blackduck/hub/hub-authentication/security/blackduck_system.key"
       WRAPPER: /opt/crate/heathcliff/healthchecks/wrapper.sh
@@ -326,7 +296,6 @@ services:
     - logstash:logstash
     - zookeeper:zookeeper
     - registration:registration
-    - solr:solr
     - postgres:postgres
     - cfssl:cfssl
     volumes_from:
@@ -349,8 +318,7 @@ services:
       HUB_POSTGRES_HOST: postgres
       HUB_POSTGRES_PORT: '5432'
       HUB_POSTGRES_USER: blackduck_user
-      HUB_PROXY_NON_PROXY_HOSTS: solr
-      HUB_VERSION: 2019.4.2
+      HUB_VERSION: 2019.6.0
       ENTRYPOINT: /opt/blackduck/hub/blackduck-upload-cache/bin/docker-entrypoint.sh
       HEALTHCHECK: "/usr/local/bin/healthcheck.sh 'https://localhost:8086/live?full=1' /opt/blackduck/hub/blackduck-upload-cache/security/root.crt"
       WRAPPER: /opt/crate/heathcliff/healthchecks/wrapper.sh
