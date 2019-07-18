@@ -329,11 +329,6 @@ services:
       links:
         - cfssl
         - logstash
-      healthcheck:
-        test: [CMD, /usr/local/bin/healthcheck.sh, 'https://localhost:8086/live?full=1', /opt/blackduck/hub/blackduck-upload-cache/security/root.crt]
-        interval: 30s
-        timeout: 10s
-        retries: 5
       tmpfs: 
       - /opt/blackduck/hub/blackduck-upload-cache/security
     volumes_from:
