@@ -113,7 +113,7 @@ services:
     - cfssl:cfssl
     volumes_from:
     - healthcheck-helper-scan
-    user: tomcat:root
+    user: scan:root
     labels:
       io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
       io.rancher.sidekicks: healthcheck-helper-scan
@@ -214,7 +214,7 @@ services:
     - logstash:logstash
     volumes_from:
     - healthcheck-helper-registration
-    user: tomcat:root
+    user: registration:root
     labels:
       io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
       io.rancher.sidekicks: healthcheck-helper-registration
@@ -310,7 +310,7 @@ services:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
   uploadcache:
-      image: blackducksoftware/blackduck-upload-cache:1.0.8
+    image: blackducksoftware/blackduck-upload-cache:1.0.8
     environment:
       HUB_MAX_MEMORY: 9600m
       HUB_POSTGRES_ADMIN: blackduck
@@ -320,20 +320,21 @@ services:
       HUB_POSTGRES_USER: blackduck_user
       HUB_VERSION: 2019.6.1
       ENTRYPOINT: /opt/blackduck/hub/blackduck-upload-cache/bin/docker-entrypoint.sh
-      HEALTHCHECK: "/usr/local/bin/healthcheck.sh 'https://localhost:8086/live?full=1' /opt/blackduck/hub/blackduck-upload-cache/security/root.crt"
+      HEALTHCHECK: "/usr/local/bin/healthcheck.sh https://localhost:8086/live?full=1 /opt/blackduck/hub/blackduck-upload-cache/security/root.crt"
       WRAPPER: /opt/crate/heathcliff/healthchecks/wrapper.sh
     entrypoint: ["sh", "-c", "/opt/crate/heathcliff/entrypoint.sh"]
-      volumes: 
-      - uploadcache-volume:/opt/blackduck/hub/blackduck-upload-cache/uploads
-      - uploadcache-keys-volume:/opt/blackduck/hub/blackduck-upload-cache/keys
-      links:
-        - cfssl
-        - logstash
-      tmpfs: 
-      - /opt/blackduck/hub/blackduck-upload-cache/security
+    volumes: 
+    - uploadcache-volume:/opt/blackduck/hub/blackduck-upload-cache/uploads
+    - uploadcache-keys-volume:/opt/blackduck/hub/blackduck-upload-cache/keys
+    links:
+    - cfssl
+    - logstash
+    tmpfs: 
+    - /opt/blackduck/hub/blackduck-upload-cache/security
     volumes_from:
-    - healthcheck-helper-authentication
-      user: 'uploadcache:root'
+    - healthcheck-helper-uploadcache
+    user: uploadcache:root
+    labels:
       io.rancher.scheduler.affinity:host_label: bdhub.group=cattle
       io.rancher.sidekicks: healthcheck-helper-uploadcache
   healthcheck-helper-uploadcache:

@@ -341,7 +341,7 @@ services:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
   uploadcache:
-      image: blackducksoftware/blackduck-upload-cache:1.0.8
+    image: blackducksoftware/blackduck-upload-cache:1.0.8
     environment:
       HUB_MAX_MEMORY: 9600m
       HUB_POSTGRES_ADMIN: blackduck
