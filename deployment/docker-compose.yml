@@ -208,7 +208,7 @@ services:
     entrypoint: ["sh", "-c", "/opt/crate/heathcliff/entrypoint.sh"]
     volumes:
     - /opt/blackduck/hub/hub-registration/security
-    - config-volume:/opt/blackduck/hub/registration/config
+    - config-volume:/opt/blackduck/hub/hub-registration/config
     mem_reservation: 671088640
     links:
     - logstash:logstash
