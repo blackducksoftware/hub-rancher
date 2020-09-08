@@ -315,7 +315,7 @@ services:
       io.rancher.container.pull_image: always
       io.rancher.container.start_once: 'true'
   redis:
-    image: blackducksoftware/blackduck-redis:2020.8.2
+    image: blackducksoftware/blackduck-redis:2020.8.0
     environment:
       HUB_MAX_MEMORY: 9600m
       HUB_POSTGRES_ADMIN: blackduck
